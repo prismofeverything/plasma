@@ -1,0 +1,87 @@
+grammar Plasma
+  rule plasma
+    decl / seq / quote / defun / def / apply / fun / sym / hash / list / date / time / str / num
+  end
+
+  rule decl
+    '|' x first:plasma? rest:(s '|' s plasma)* x '|' <DeclNode>
+  end
+
+  rule seq
+    '(' x first:plasma? rest:(s '|' s plasma)* x ')' <SeqNode>
+  end
+
+  rule quote
+    "'" plasma <QuoteNode>
+  end
+
+  rule defun
+    'defun' s params s plasma <DefunNode>
+  end
+
+  rule def
+    'def' s sym s plasma <DefNode>
+  end
+
+  rule apply
+    '(' x applied:(fun / sym) s first:plasma rest:(s plasma)* x ')' <ApplyNode>
+  end
+
+  rule fun
+    'fun' s params s plasma <FunNode>
+  end
+
+  rule params
+    '(' x first:sym rest:(s sym)* x ')' <ParamsNode>
+  end
+
+  rule sym
+    [a-z+!/\^&@?*%<>=_-]+  <SymNode>
+  end
+
+  rule hash
+    '{' x first:relation? rest:(s relation)* x '}' <HashNode>
+  end
+
+  rule relation
+    sym x ':' x plasma <RelationNode>
+  end
+
+  rule list
+    '[' x first:plasma? rest:(s plasma)* x ']' <ListNode>
+  end
+
+  rule date
+    year [-] month:dual [-] day:dual (s time)? <DateNode>
+  end
+
+  rule year
+    [0-9] [0-9] [0-9] [0-9]
+  end
+
+  rule dual
+    [0-9] [0-9]
+  end
+
+  rule time
+    hours:dual ':' minutes:dual ':' seconds:dual <TimeNode>
+  end
+
+  rule str
+    '"' first:([^"])? rest:([^"])* '"' <StrNode>
+  end
+
+  rule num
+    whole:([0-9]+) expansion:('.' [0-9]+)? <NumNode>
+  end
+
+  rule x
+    s?
+  end
+
+  rule s
+    [ \n]+
+  end
+end
+
+
