@@ -31,7 +31,6 @@ class PlasmaInterpreter
     load "#{rb}.rb"
 
     @env.merge!(Object.const_get(rb.classify).plasma(self))
-    @env.scope!
   end
 
   def merge(psm)
@@ -39,7 +38,6 @@ class PlasmaInterpreter
     code = source.read.strip
     value = interpret code
 
-    @env.scope!
     return value
   end
   

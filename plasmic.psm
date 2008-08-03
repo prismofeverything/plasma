@@ -3,9 +3,9 @@
 defun (yar x) (def yy (* 3 x) | (- yy 5)) |
 defun (peanut y z) (y (- z 12)) |
 
-(peanut yar 44) |
+(print (peanut yar 44)) |
 
 defun (owlepellet z x) (peanut z (yar x)) |
-(owlepellet yar 44) |
+(print (owlepellet yar 44)) |
 
 

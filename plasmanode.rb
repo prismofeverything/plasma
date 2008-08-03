@@ -41,7 +41,7 @@ class Env
   end
 
   def resolve(key)
-    @state.each do |layer|
+    @state.reverse.each do |layer|
       return layer[key] if layer.keys.include?(key)
     end
 
