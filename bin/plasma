@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+gem 'plasma'
+
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + '/../lib'))
+require 'plasma'
+
+interpreter = Plasma::Interpreter::PlasmaInterpreter.new
+
+if ARGV.empty?
+  interpreter.repl
+else
+  puts interpreter.merge(ARGV[0])
+end
+
+
+
+
