@@ -2,10 +2,11 @@
 
 defun (yar x) (def yy (* 3 x) | (- yy 5)) |
 defun (peanut y z) (y (- z 12)) |
+defun (zooo aaaaa) 12 |
 
-(print (peanut yar 44)) |
+(peanut yar 44) |
 
-defun (owlepellet z x) (peanut z (yar x)) |
-(print (owlepellet yar 44)) |
+
+
 
 

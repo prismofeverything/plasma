@@ -1,58 +1,12 @@
 #!/usr/bin/ruby
 
 require 'optparse'
-require 'rubygems'
-require 'treetop'
-load 'plasma.rb'
-load 'plasmanode.rb'
-load 'plasmacore.rb'
-
-class String
-  def classify
-    self.split('_').map{|s| s.capitalize}.join
-  end
-end
-
-class PlasmaInterpreter
-  attr_accessor :env
-
-  def initialize
-    @env = Env.new
-    @env.bind!(:mu, self)
-    @env.bind!(:env, @env)
-
-    @plasma = PlasmaParser.new
-    
-    import 'plasmacore'
-    merge 'core.psm'
-  end
-
-  def import(rb)
-    load "#{rb}.rb"
-
-    @env.merge!(Object.const_get(rb.classify).plasma(self))
-  end
-
-  def merge(psm)
-    source = File.open(psm, 'r')
-    code = source.read.strip
-    value = interpret code
-
-    return value
-  end
-  
-  def interpret(code, environment=nil)
-    environment = @env if environment.nil?
-    parsed = @plasma.parse(code)
-    parsed.nil? ? "Parsing failed" : parsed.evaluate(environment)
-  end
-end
-
+load 'plasma_interp.rb'
 
 interpreter = PlasmaInterpreter.new
 
 if ARGV.empty?
-  puts 'argument?'
+  interpreter.repl
 else
   puts interpreter.merge(ARGV[0])
 end

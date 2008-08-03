@@ -1,9 +1,43 @@
+class Object
+  def to_plasma
+    self
+  end
+end
+
+class String
+  def classify
+    self.split('_').map{|s| s.capitalize}.join
+  end
+
+  def to_plasma
+    self.inspect
+  end
+end
+
 class Array
   def to_hash
     hash = {}
     self.each {|key, value| hash[key] = value}
 
     return hash
+  end
+
+  def to_plasma
+    plasma = self.map do |p|
+      p.to_plasma
+    end.join ' '
+
+    return "[#{plasma}]"
+  end
+end
+
+class Hash
+  def to_plasma
+    plasma = self.map do |key, value|
+      "#{key.to_s}:#{value.to_plasma}"
+    end.join ' '
+
+    return "{#{plasma}}"
   end
 end
 
@@ -18,6 +52,10 @@ class Env
 
   def to_s
     @state.map {|s| s.inspect}.join("\n")
+  end
+
+  def to_plasma
+    @state.to_plasma
   end
 
   def bind!(key, value)
@@ -41,8 +79,8 @@ class Env
   end
 
   def resolve(key)
-    @state.reverse.each do |layer|
-      return layer[key] if layer.keys.include?(key)
+    @state.reverse_each do |layer|
+      return layer[key] if layer.include?(key)
     end
 
     # nothing to find
@@ -60,6 +98,10 @@ class Quote
   def unquote(env)
     @unevaluated.eval(env)
   end
+
+  def to_plasma
+    "'#{@unevaluated.text_value}"
+  end
 end
 
 class Closure
@@ -69,6 +111,7 @@ class Closure
     @env = env.dup
     @params = params
     @body = body
+    @proc = nil
   end
 
   def apply(*args)
@@ -87,6 +130,17 @@ class Closure
       return Closure.new(@env.dup.merge!(zipped), left, body)
     end
   end
+
+  def to_proc
+    @proc ||= Proc.new do |*args|
+      self.apply args
+    end
+  end
+
+  def to_plasma
+    p = params.map{|p| p.to_s}.join(' ')
+    "fun (#{p}) #{@body.text_value}"
+  end
 end
 
 class UnresolvedSymbolException < Exception
@@ -95,6 +149,12 @@ class UnresolvedSymbolException < Exception
   def initialize(symbol)
     @symbol = symbol
   end
+end
+
+class TooManyArgumentsException < Exception
+end
+
+class FailedToParseException < Exception
 end
 
 class PlasmaNode < Treetop::Runtime::SyntaxNode
@@ -161,7 +221,9 @@ end
 
 class DefNode < PlasmaNode
   def evaluate(env)
-    env.bind!(sym.text_value.to_sym, plasma.evaluate(env))
+    value = plasma.evaluate(env)
+    env.bind!(sym.text_value.to_sym, value)
+    value
   end
 end
 
@@ -183,9 +245,17 @@ class ApplyNode < ColNode
 
     begin
       closure = applied.evaluate(env)
-      closure.apply(*args)
+      return closure.apply(*args)
     rescue UnresolvedSymbolException => detail
-      args.first.send(detail.symbol, *args.slice(1..args.length))
+      begin
+        args.first.send(detail.symbol, *args.slice(1..args.length))
+      rescue ArgumentError => arg
+        begin
+          args.first.send(detail.symbol, *args.slice(1..args.length-2), &args.last.to_proc)
+        rescue Exception => brg
+          raise TooManyArgumentsException.new(self.text_value), "too many arguments in #{self.text_value}", caller
+        end
+      end
     end
   end
 end
