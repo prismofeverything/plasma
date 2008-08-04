@@ -2,7 +2,7 @@ module Plasma
   module Interpreter
     grammar PlasmaGrammar
       rule plasma
-        decl / seq / quote / defun / def / apply / fun / sym / hash / list / date / time / str / num
+        decl / seq / quote / defun / def / fun / apply / sym / hash / list / date / time / str / num
       end
 
       rule decl
@@ -18,23 +18,23 @@ module Plasma
       end
 
       rule defun
-        'defun' s params s plasma <DefunNode>
+        '(' x 'defun' s params s plasma x ')' <DefunNode>
       end
 
       rule def
-        'def' s sym s plasma <DefNode>
-      end
-
-      rule apply
-        '(' x applied:(fun / sym) s first:plasma rest:(s plasma)* x ')' <ApplyNode>
+        '(' x 'def' s sym s plasma x ')' <DefNode>
       end
 
       rule fun
-        'fun' s params s plasma <FunNode>
+        '(' x 'fun' s params s plasma x ')' <FunNode>
       end
 
       rule params
         '(' x first:sym rest:(s sym)* x ')' <ParamsNode>
+      end
+
+      rule apply
+        '(' x applied:(fun / sym) s first:plasma rest:(s plasma)* x ')' <ApplyNode>
       end
 
       rule sym

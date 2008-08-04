@@ -2,10 +2,13 @@
 
 (print (import "test/plasmic")) |
 
-defun (owlepellet z x) (peanut z (yar x)) |
+(defun (owlepellet z x) (peanut z (yar x))) |
 (print (owlepellet yar (zooo 44))) |
 
 (print (length [12 33 24924 zooo])) |
+(print (eval '(length [12 33 24924 zooo 'uuu]))) |
+(print (eval "(length [12 33 24924 zooo 1 1 1 1 1 1])")) |
+
 (print (inject [1 4 4 5 12] 3 (fun (a x) (* a (/ x 6))))) |
 
 

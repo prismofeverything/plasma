@@ -6,7 +6,7 @@ module Plasma
       def initialize
         @prompt = "-----|  "
         @dir = File.dirname(__FILE__)
-        @load_path = [@dir]
+        @load_path = [File.join(PLASMA_ROOT, 'include'), PLASMA_PACKAGE_ROOT, @dir]
 
         @env = Env.new
         @env.bind!(:mu, self)
@@ -15,7 +15,7 @@ module Plasma
         @plasma = PlasmaGrammarParser.new
         
         import 'plasma_core'
-#         merge 'core.psm'
+        merge 'core'
       end
 
       def to_s
@@ -27,31 +27,57 @@ module Plasma
       end
 
       def import(rb)
+        name = rb.split('/').last
         file = "#{rb}.rb"
         @load_path.each do |p|
           package = File.join(p, file)
           if File.exist? package
             load package
-            @env.merge!(Plasma::Interpreter.const_get(rb.classify).plasma(self))
+            @env.merge!(Plasma::Interpreter.const_get(name.classify).plasma(self))
+
+            return true
           end
         end
+
+        return false
       end
 
       def merge(psm)
-        source = File.open(psm, 'r')
-        code = source.read.strip
-        value = interpret code
+        name = psm.split('/').last
+        file = "#{psm}.psm"
+        found = false
+        value = nil
+        
+        @load_path.each do |p|
+          package = File.join(p, file)
+          if File.exist? package
+            source = File.open(package, 'r')
+            code = source.read.strip
 
-        return value
+            value = self.interpret(code)
+            found = true
+          end
+        end
+
+        return value if found
+        raise NoSuchSourceException.new(psm), "no such source #{psm}", caller
       end
       
-      def interpret(code, environment=nil)
-        environment = @env if environment.nil?
-        parsed = @plasma.parse(code)
+      def parse(code)
+        tree = @plasma.parse(code)
+        raise FailedToParseException.new, "failed to parse #{code}", caller if tree.nil? 
 
-        raise FailedToParseException.new, "failed to parse #{code}", caller if parsed.nil? 
+        return tree
+      end
 
-        parsed.evaluate(environment)
+      def evaluate(tree, env=nil)
+        env = @env if env.nil?
+        tree.evaluate(env)
+      end
+
+      def interpret(code, env=nil)
+        tree = parse(code)
+        evaluate(tree, env)
       end
 
       def repl

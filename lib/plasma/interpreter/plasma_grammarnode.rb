@@ -134,6 +134,14 @@ module Plasma
       end
     end
 
+    class NoSuchSourceException < Exception
+      attr_accessor :psm
+
+      def initialize(psm)
+        @psm = psm
+      end
+    end
+
     class TooManyArgumentsException < Exception
     end
 
@@ -199,6 +207,7 @@ module Plasma
         closure = Closure.new(env, syms.slice(1..syms.length), plasma)
         closure.env.merge!(syms[0] => closure)
         env.bind!(syms[0], closure)
+        closure
       end
     end
 
