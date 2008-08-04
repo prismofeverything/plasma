@@ -13,11 +13,12 @@ gemspec = Gem::Specification.new do |s|
   s.homepage = "http://kaleidomedallion.com/plasma/"
   s.platform = Gem::Platform::RUBY
   s.summary = "plasma --- a lightweight interpreted templating language in ruby"
-  s.files = ["core.psm", "import_test.psm", "plasma", "plasma.gemspec", "plasma.rb", "plasma.treetop", "plasmacore.rb", "plasmanode.rb", "plasmatest.rb", "plasmic.psm", "rubyplasma.rb"]
+  s.files = FileList['README', 'Rakefile', "{test,lib,bin,doc,examples}/**/*"].to_a
   s.bindir = 'bin'
   s.executables = ['plasma']
   s.require_path = 'lib'
   s.autorequire = "plasma"
+  s.rubyforge_project = 'plasma'
   s.add_dependency "treetop"
 end
 
