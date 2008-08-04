@@ -22,6 +22,10 @@ module Plasma
         "plasma -- #{@env.keys}"
       end
 
+      def to_plasma
+        "eval"
+      end
+
       def path
         @load_path
       end

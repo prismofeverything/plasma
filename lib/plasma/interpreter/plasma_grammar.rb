@@ -40,40 +40,50 @@ module Plasma
                   if r6
                     r0 = r6
                   else
-                    r7 = _nt_apply
+                    r7 = _nt_if
                     if r7
                       r0 = r7
                     else
-                      r8 = _nt_sym
+                      r8 = _nt_apply
                       if r8
                         r0 = r8
                       else
-                        r9 = _nt_hash
+                        r9 = _nt_bool
                         if r9
                           r0 = r9
                         else
-                          r10 = _nt_list
+                          r10 = _nt_sym
                           if r10
                             r0 = r10
                           else
-                            r11 = _nt_date
+                            r11 = _nt_hash
                             if r11
                               r0 = r11
                             else
-                              r12 = _nt_time
+                              r12 = _nt_list
                               if r12
                                 r0 = r12
                               else
-                                r13 = _nt_str
+                                r13 = _nt_date
                                 if r13
                                   r0 = r13
                                 else
-                                  r14 = _nt_num
+                                  r14 = _nt_time
                                   if r14
                                     r0 = r14
                                   else
-                                    self.index = i0
-                                    r0 = nil
+                                    r15 = _nt_str
+                                    if r15
+                                      r0 = r15
+                                    else
+                                      r16 = _nt_num
+                                      if r16
+                                        r0 = r16
+                                      else
+                                        self.index = i0
+                                        r0 = nil
+                                      end
+                                    end
                                   end
                                 end
                               end
@@ -804,6 +814,179 @@ module Plasma
         return r0
       end
 
+      module If0
+        def s
+          elements[0]
+        end
+
+        def s
+          elements[2]
+        end
+
+        def other
+          elements[3]
+        end
+      end
+
+      module If1
+        def x
+          elements[1]
+        end
+
+        def s
+          elements[3]
+        end
+
+        def pred
+          elements[4]
+        end
+
+        def s
+          elements[5]
+        end
+
+        def s
+          elements[7]
+        end
+
+        def body
+          elements[8]
+        end
+
+        def maybe
+          elements[9]
+        end
+
+        def x
+          elements[10]
+        end
+
+      end
+
+      def _nt_if
+        start_index = index
+        if node_cache[:if].has_key?(index)
+          cached = node_cache[:if][index]
+          @index = cached.interval.end if cached
+          return cached
+        end
+
+        i0, s0 = index, []
+        if input.index('(', index) == index
+          r1 = (SyntaxNode).new(input, index...(index + 1))
+          @index += 1
+        else
+          terminal_parse_failure('(')
+          r1 = nil
+        end
+        s0 << r1
+        if r1
+          r2 = _nt_x
+          s0 << r2
+          if r2
+            if input.index('if', index) == index
+              r3 = (SyntaxNode).new(input, index...(index + 2))
+              @index += 2
+            else
+              terminal_parse_failure('if')
+              r3 = nil
+            end
+            s0 << r3
+            if r3
+              r4 = _nt_s
+              s0 << r4
+              if r4
+                r5 = _nt_plasma
+                s0 << r5
+                if r5
+                  r6 = _nt_s
+                  s0 << r6
+                  if r6
+                    if input.index('then', index) == index
+                      r7 = (SyntaxNode).new(input, index...(index + 4))
+                      @index += 4
+                    else
+                      terminal_parse_failure('then')
+                      r7 = nil
+                    end
+                    s0 << r7
+                    if r7
+                      r8 = _nt_s
+                      s0 << r8
+                      if r8
+                        r9 = _nt_plasma
+                        s0 << r9
+                        if r9
+                          i11, s11 = index, []
+                          r12 = _nt_s
+                          s11 << r12
+                          if r12
+                            if input.index('else', index) == index
+                              r13 = (SyntaxNode).new(input, index...(index + 4))
+                              @index += 4
+                            else
+                              terminal_parse_failure('else')
+                              r13 = nil
+                            end
+                            s11 << r13
+                            if r13
+                              r14 = _nt_s
+                              s11 << r14
+                              if r14
+                                r15 = _nt_plasma
+                                s11 << r15
+                              end
+                            end
+                          end
+                          if s11.last
+                            r11 = (SyntaxNode).new(input, i11...index, s11)
+                            r11.extend(If0)
+                          else
+                            self.index = i11
+                            r11 = nil
+                          end
+                          if r11
+                            r10 = r11
+                          else
+                            r10 = SyntaxNode.new(input, index...index)
+                          end
+                          s0 << r10
+                          if r10
+                            r16 = _nt_x
+                            s0 << r16
+                            if r16
+                              if input.index(')', index) == index
+                                r17 = (SyntaxNode).new(input, index...(index + 1))
+                                @index += 1
+                              else
+                                terminal_parse_failure(')')
+                                r17 = nil
+                              end
+                              s0 << r17
+                            end
+                          end
+                        end
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+        if s0.last
+          r0 = (IfNode).new(input, i0...index, s0)
+          r0.extend(If1)
+        else
+          self.index = i0
+          r0 = nil
+        end
+
+        node_cache[:if][start_index] = r0
+
+        return r0
+      end
+
       module Apply0
         def s
           elements[0]
@@ -935,6 +1118,45 @@ module Plasma
         end
 
         node_cache[:apply][start_index] = r0
+
+        return r0
+      end
+
+      def _nt_bool
+        start_index = index
+        if node_cache[:bool].has_key?(index)
+          cached = node_cache[:bool][index]
+          @index = cached.interval.end if cached
+          return cached
+        end
+
+        i0 = index
+        if input.index('true', index) == index
+          r1 = (TrueNode).new(input, index...(index + 4))
+          @index += 4
+        else
+          terminal_parse_failure('true')
+          r1 = nil
+        end
+        if r1
+          r0 = r1
+        else
+          if input.index('false', index) == index
+            r2 = (FalseNode).new(input, index...(index + 5))
+            @index += 5
+          else
+            terminal_parse_failure('false')
+            r2 = nil
+          end
+          if r2
+            r0 = r2
+          else
+            self.index = i0
+            r0 = nil
+          end
+        end
+
+        node_cache[:bool][start_index] = r0
 
         return r0
       end

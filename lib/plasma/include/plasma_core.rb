@@ -8,7 +8,7 @@ module Plasma
           end,
 
           :print => RubyClosure.new('print', interp) do |string|
-            puts string
+            puts string.to_plasma
           end,
 
           :eval => RubyClosure.new('eval', interp) do |quote|

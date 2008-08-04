@@ -2,7 +2,7 @@ module Plasma
   module Interpreter
     grammar PlasmaGrammar
       rule plasma
-        decl / seq / quote / defun / def / fun / apply / sym / hash / list / date / time / str / num
+        decl / seq / quote / defun / def / fun / if / apply / bool / sym / hash / list / date / time / str / num
       end
 
       rule decl
@@ -33,8 +33,16 @@ module Plasma
         '(' x first:sym rest:(s sym)* x ')' <ParamsNode>
       end
 
+      rule if
+        '(' x 'if' s pred:plasma s 'then' s body:plasma maybe:(s 'else' s other:plasma)? x ')' <IfNode>
+      end
+
       rule apply
         '(' x applied:(fun / sym) s first:plasma rest:(s plasma)* x ')' <ApplyNode>
+      end
+
+      rule bool
+        'true' <TrueNode> / 'false' <FalseNode>
       end
 
       rule sym

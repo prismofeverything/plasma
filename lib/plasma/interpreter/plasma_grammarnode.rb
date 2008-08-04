@@ -92,7 +92,7 @@ module Plasma
 
       def to_proc
         @proc ||= Proc.new do |*args|
-          self.apply args
+          self.apply *args
         end
       end
 
@@ -231,6 +231,18 @@ module Plasma
       end
     end
 
+    class IfNode < PlasmaNode
+      def evaluate(env)
+        if pred.evaluate(env)
+          body.evaluate(env)
+        elsif respond_to?(:maybe)
+          maybe.other.evaluate(env)
+        else
+          nil
+        end
+      end
+    end
+
     class ApplyNode < ColNode
       def evaluate(env)
         args = col.map{|arg| arg.evaluate(env)}
@@ -240,15 +252,30 @@ module Plasma
           return closure.apply(*args)
         rescue UnresolvedSymbolException => detail
           begin
-            args.first.send(detail.symbol, *args.slice(1..args.length))
+            return args.first.send(detail.symbol, *args.slice(1..args.length))
           rescue ArgumentError => arg
             begin
-              args.first.send(detail.symbol, *args.slice(1..args.length-1), &args.last.to_proc)
+              slice = args.slice(1...args.length-1)
+              proc = args.last.to_proc
+
+              return args.first.send(detail.symbol, *slice, &proc)
             rescue Exception => brg
               raise TooManyArgumentsException.new(self.text_value), "too many arguments in #{self.text_value}", caller
             end
           end
         end
+      end
+    end
+
+    class TrueNode < PlasmaNode
+      def evaluate(env)
+        true
+      end
+    end
+
+    class FalseNode < PlasmaNode
+      def evaluate(env)
+        false
       end
     end
 
