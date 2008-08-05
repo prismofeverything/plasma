@@ -17,7 +17,6 @@ gemspec = Gem::Specification.new do |s|
   s.bindir = 'bin'
   s.executables = ['plasma']
   s.require_path = 'lib'
-  s.autorequire = "plasma"
   s.rubyforge_project = 'plasma'
   s.add_dependency "treetop"
 end
