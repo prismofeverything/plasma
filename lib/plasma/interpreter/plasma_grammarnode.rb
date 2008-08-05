@@ -135,10 +135,10 @@ module Plasma
     end
 
     class NoSuchSourceException < Exception
-      attr_accessor :psm
+      attr_accessor :plasma
 
-      def initialize(psm)
-        @psm = psm
+      def initialize(plasma)
+        @plasma = plasma
       end
     end
 

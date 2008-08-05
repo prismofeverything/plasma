@@ -46,9 +46,9 @@ module Plasma
         return false
       end
 
-      def merge(psm)
-        name = psm.split('/').last
-        file = "#{psm}.psm"
+      def merge(plasma)
+        name = plasma.split('/').last
+        file = "#{plasma}.plasma"
         found = false
         value = nil
         
@@ -64,7 +64,7 @@ module Plasma
         end
 
         return value if found
-        raise NoSuchSourceException.new(psm), "no such source #{psm}", caller
+        raise NoSuchSourceException.new(plasma), "no such source #{plasma}", caller
       end
       
       def parse(code)
