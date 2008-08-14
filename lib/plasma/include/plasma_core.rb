@@ -18,6 +18,10 @@ module Plasma
               interp.evaluate(quote)
             end
           end
+
+          :parse => RubyClosure.new('parse', interp) do |code|
+            interp.parse(code)
+          end
         }
       end
     end
