@@ -121,7 +121,7 @@ module Plasma
           keys = fresh.keys.join(' ')
           env = Env.new(fresh.merge(@name => self))
 
-          interp.interpret("fun (#{params}) ((#{@name} #{keys} #{params}))", env)
+          interp.interpret("fun (#{params}) (#{@name} #{keys} #{params})", env)
         end
       end
     end
@@ -171,6 +171,19 @@ module Plasma
             end.flatten.unshift(first)
           end
         end
+      end
+    end
+
+    class CommentNode < PlasmaNode
+      def evaluate(env)
+        template = Plasma::Template::PlasmaTemplate.parse(body.text_value)
+
+        env.scope!
+        template.plasma.env = env
+        rendered = template.render
+        env.release!
+
+        rendered
       end
     end
 

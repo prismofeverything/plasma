@@ -23,12 +23,15 @@ test = "| (def yar (fun (x) (* 3 x))) |
   (def peanut (fun (y z) (/ (- y z) z))) |
   (peanut (yar 66) 12) |"
 bad = "(999)(888)"
+comment = "-- So I might have something to say --"
+template = "-- || (+ 5 3) || --"
+nested = "-- well maybe I will just || (def a 111) | -- pluutarch rises -- | a || it away then --"
 env = Plasma::Interpreter::Env.new
 
 
 statements = [seq, quote, define, defun, fun, apply1, apply2, 
               sym, hash, list, date, time, str, num, test, 
-              decl, declb, defun, bad, curry]
+              decl, declb, defun, bad, curry, comment, template, nested]
 statements.each do |statement|
   parsed = plasma.parse(statement)
   evaluated = parsed.nil? ? "does not parse" : parsed.evaluate(env).to_plasma

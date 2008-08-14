@@ -16,72 +16,77 @@ module Plasma
         end
 
         i0 = index
-        r1 = _nt_decl
+        r1 = _nt_comment
         if r1
           r0 = r1
         else
-          r2 = _nt_seq
+          r2 = _nt_decl
           if r2
             r0 = r2
           else
-            r3 = _nt_quote
+            r3 = _nt_seq
             if r3
               r0 = r3
             else
-              r4 = _nt_defun
+              r4 = _nt_quote
               if r4
                 r0 = r4
               else
-                r5 = _nt_def
+                r5 = _nt_defun
                 if r5
                   r0 = r5
                 else
-                  r6 = _nt_fun
+                  r6 = _nt_def
                   if r6
                     r0 = r6
                   else
-                    r7 = _nt_if
+                    r7 = _nt_fun
                     if r7
                       r0 = r7
                     else
-                      r8 = _nt_apply
+                      r8 = _nt_if
                       if r8
                         r0 = r8
                       else
-                        r9 = _nt_bool
+                        r9 = _nt_apply
                         if r9
                           r0 = r9
                         else
-                          r10 = _nt_sym
+                          r10 = _nt_bool
                           if r10
                             r0 = r10
                           else
-                            r11 = _nt_hash
+                            r11 = _nt_sym
                             if r11
                               r0 = r11
                             else
-                              r12 = _nt_list
+                              r12 = _nt_hash
                               if r12
                                 r0 = r12
                               else
-                                r13 = _nt_date
+                                r13 = _nt_list
                                 if r13
                                   r0 = r13
                                 else
-                                  r14 = _nt_time
+                                  r14 = _nt_date
                                   if r14
                                     r0 = r14
                                   else
-                                    r15 = _nt_str
+                                    r15 = _nt_time
                                     if r15
                                       r0 = r15
                                     else
-                                      r16 = _nt_num
+                                      r16 = _nt_str
                                       if r16
                                         r0 = r16
                                       else
-                                        self.index = i0
-                                        r0 = nil
+                                        r17 = _nt_num
+                                        if r17
+                                          r0 = r17
+                                        else
+                                          self.index = i0
+                                          r0 = nil
+                                        end
                                       end
                                     end
                                   end
@@ -100,6 +105,101 @@ module Plasma
         end
 
         node_cache[:plasma][start_index] = r0
+
+        return r0
+      end
+
+      module Comment0
+      end
+
+      module Comment1
+        def body
+          elements[1]
+        end
+
+      end
+
+      def _nt_comment
+        start_index = index
+        if node_cache[:comment].has_key?(index)
+          cached = node_cache[:comment][index]
+          @index = cached.interval.end if cached
+          return cached
+        end
+
+        i0, s0 = index, []
+        if input.index('--', index) == index
+          r1 = (SyntaxNode).new(input, index...(index + 2))
+          @index += 2
+        else
+          terminal_parse_failure('--')
+          r1 = nil
+        end
+        s0 << r1
+        if r1
+          s2, i2 = [], index
+          loop do
+            i3, s3 = index, []
+            i4 = index
+            if input.index('--', index) == index
+              r5 = (SyntaxNode).new(input, index...(index + 2))
+              @index += 2
+            else
+              terminal_parse_failure('--')
+              r5 = nil
+            end
+            if r5
+              r4 = nil
+            else
+              self.index = i4
+              r4 = SyntaxNode.new(input, index...index)
+            end
+            s3 << r4
+            if r4
+              if index < input_length
+                r6 = (SyntaxNode).new(input, index...(index + 1))
+                @index += 1
+              else
+                terminal_parse_failure("any character")
+                r6 = nil
+              end
+              s3 << r6
+            end
+            if s3.last
+              r3 = (SyntaxNode).new(input, i3...index, s3)
+              r3.extend(Comment0)
+            else
+              self.index = i3
+              r3 = nil
+            end
+            if r3
+              s2 << r3
+            else
+              break
+            end
+          end
+          r2 = SyntaxNode.new(input, i2...index, s2)
+          s0 << r2
+          if r2
+            if input.index('--', index) == index
+              r7 = (SyntaxNode).new(input, index...(index + 2))
+              @index += 2
+            else
+              terminal_parse_failure('--')
+              r7 = nil
+            end
+            s0 << r7
+          end
+        end
+        if s0.last
+          r0 = (CommentNode).new(input, i0...index, s0)
+          r0.extend(Comment1)
+        else
+          self.index = i0
+          r0 = nil
+        end
+
+        node_cache[:comment][start_index] = r0
 
         return r0
       end
