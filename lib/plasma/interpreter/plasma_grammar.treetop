@@ -2,7 +2,16 @@ module Plasma
   module Interpreter
     grammar PlasmaGrammar
       rule plasma
-        decl / seq / quote / defun / def / fun / if / apply / bool / sym / hash / list / date / time / str / num
+        comment / decl / seq / quote / defun / def / fun / if / apply / bool / sym / hash / list / date / time / str / num
+      end
+
+      rule comment
+        '--' body:comment_body '--'
+#        '--' body:(!'--' .)* '--' <CommentNode>
+      end
+
+      rule comment_body
+        s pre:(.)* plasma post:(.)* comment_body? s <CommentBodyNode>
       end
 
       rule decl

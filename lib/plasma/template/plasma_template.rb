@@ -1,6 +1,8 @@
 module Plasma
   module Template
     class PlasmaTemplate
+      attr_accessor :plasma
+
       @@separator = /\|\|/
 
       def self.parse(template)
