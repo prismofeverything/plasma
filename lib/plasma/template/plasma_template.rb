@@ -3,7 +3,7 @@ module Plasma
     class PlasmaTemplate
       attr_accessor :plasma
 
-      @@separator = /\|\|/
+      @@separator = /##*[^#]+##*/
 
       def self.parse(template)
         return PlasmaTemplate.new(template)

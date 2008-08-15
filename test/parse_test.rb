@@ -15,6 +15,7 @@ curry = "((def aaa ((fun (a b) (* a b)) 3)) | (aaa 11))"
 sym = "((def tatao+ht-o*he<>i==== 555) | tatao+ht-o*he<>i====)"
 hash = "{yayay:77777 rrr:111}"
 list = "[11 33 449]"
+regex = "/[^7]*77788?/"
 date = "3409-65-22"
 time = "55:32:18"
 str = '"yaodui iwfhoeo"'
@@ -28,7 +29,7 @@ env = Plasma::Interpreter::Env.new
 
 
 statements = [seq, quote, define, defun, fun, apply1, apply2, 
-              sym, hash, list, date, time, str, num, test, 
+              sym, hash, list, regex, date, time, str, num, test, 
               decl, declb, defun, bad, curry]
 statements.each do |statement|
   parsed = plasma.parse(statement)

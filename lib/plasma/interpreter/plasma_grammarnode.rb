@@ -314,6 +314,12 @@ module Plasma
       end
     end
 
+    class RegexNode < PlasmaNode
+      def evaluate(env)
+        Regexp.new(body.text_value)
+      end
+    end
+
     class DateNode < PlasmaNode
       def evaluate(env)
       end
@@ -324,9 +330,9 @@ module Plasma
       end
     end
 
-    class StrNode < ColNode
+    class StrNode < PlasmaNode
       def evaluate(env)
-        self.text_value.slice(1...self.text_value.length-1)
+        body.text_value
       end
     end
 

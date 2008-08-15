@@ -2,7 +2,7 @@ module Plasma
   module Interpreter
     grammar PlasmaGrammar
       rule plasma
-        decl / seq / quote / defun / def / fun / if / apply / bool / sym / hash / list / date / time / str / num
+        decl / seq / quote / defun / def / fun / if / apply / bool / sym / hash / list / regex / date / time / str / num
       end
 
       rule decl
@@ -46,7 +46,7 @@ module Plasma
       end
 
       rule sym
-        [a-z+!/\^&@?*%<>=_-]+  <SymNode>
+        [a-z+!\^&@?*%<>=_-]+  <SymNode>
       end
 
       rule hash
@@ -59,6 +59,10 @@ module Plasma
 
       rule list
         '[' x first:plasma? rest:(s plasma)* x ']' <ListNode>
+      end
+
+      rule regex
+        '/' body:([^/])* '/' <RegexNode>
       end
 
       rule date
@@ -78,7 +82,7 @@ module Plasma
       end
 
       rule str
-        '"' first:([^"])? rest:([^"])* '"' <StrNode>
+        '"' body:([^"])* '"' <StrNode>
       end
 
       rule num

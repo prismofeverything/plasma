@@ -64,24 +64,29 @@ module Plasma
                               if r12
                                 r0 = r12
                               else
-                                r13 = _nt_date
+                                r13 = _nt_regex
                                 if r13
                                   r0 = r13
                                 else
-                                  r14 = _nt_time
+                                  r14 = _nt_date
                                   if r14
                                     r0 = r14
                                   else
-                                    r15 = _nt_str
+                                    r15 = _nt_time
                                     if r15
                                       r0 = r15
                                     else
-                                      r16 = _nt_num
+                                      r16 = _nt_str
                                       if r16
                                         r0 = r16
                                       else
-                                        self.index = i0
-                                        r0 = nil
+                                        r17 = _nt_num
+                                        if r17
+                                          r0 = r17
+                                        else
+                                          self.index = i0
+                                          r0 = nil
+                                        end
                                       end
                                     end
                                   end
@@ -1171,7 +1176,7 @@ module Plasma
 
         s0, i0 = [], index
         loop do
-          if input.index(Regexp.new('[a-z+!/\\^&@?*%<>=_-]'), index) == index
+          if input.index(Regexp.new('[a-z+!\\^&@?*%<>=_-]'), index) == index
             r1 = (SyntaxNode).new(input, index...(index + 1))
             @index += 1
           else
@@ -1483,6 +1488,71 @@ module Plasma
         return r0
       end
 
+      module Regex0
+        def body
+          elements[1]
+        end
+
+      end
+
+      def _nt_regex
+        start_index = index
+        if node_cache[:regex].has_key?(index)
+          cached = node_cache[:regex][index]
+          @index = cached.interval.end if cached
+          return cached
+        end
+
+        i0, s0 = index, []
+        if input.index('/', index) == index
+          r1 = (SyntaxNode).new(input, index...(index + 1))
+          @index += 1
+        else
+          terminal_parse_failure('/')
+          r1 = nil
+        end
+        s0 << r1
+        if r1
+          s2, i2 = [], index
+          loop do
+            if input.index(Regexp.new('[^/]'), index) == index
+              r3 = (SyntaxNode).new(input, index...(index + 1))
+              @index += 1
+            else
+              r3 = nil
+            end
+            if r3
+              s2 << r3
+            else
+              break
+            end
+          end
+          r2 = SyntaxNode.new(input, i2...index, s2)
+          s0 << r2
+          if r2
+            if input.index('/', index) == index
+              r4 = (SyntaxNode).new(input, index...(index + 1))
+              @index += 1
+            else
+              terminal_parse_failure('/')
+              r4 = nil
+            end
+            s0 << r4
+          end
+        end
+        if s0.last
+          r0 = (RegexNode).new(input, i0...index, s0)
+          r0.extend(Regex0)
+        else
+          self.index = i0
+          r0 = nil
+        end
+
+        node_cache[:regex][start_index] = r0
+
+        return r0
+      end
+
       module Date0
         def s
           elements[0]
@@ -1747,12 +1817,8 @@ module Plasma
       end
 
       module Str0
-        def first
+        def body
           elements[1]
-        end
-
-        def rest
-          elements[2]
         end
 
       end
@@ -1775,45 +1841,31 @@ module Plasma
         end
         s0 << r1
         if r1
-          if input.index(Regexp.new('[^"]'), index) == index
-            r3 = (SyntaxNode).new(input, index...(index + 1))
-            @index += 1
-          else
-            r3 = nil
+          s2, i2 = [], index
+          loop do
+            if input.index(Regexp.new('[^"]'), index) == index
+              r3 = (SyntaxNode).new(input, index...(index + 1))
+              @index += 1
+            else
+              r3 = nil
+            end
+            if r3
+              s2 << r3
+            else
+              break
+            end
           end
-          if r3
-            r2 = r3
-          else
-            r2 = SyntaxNode.new(input, index...index)
-          end
+          r2 = SyntaxNode.new(input, i2...index, s2)
           s0 << r2
           if r2
-            s4, i4 = [], index
-            loop do
-              if input.index(Regexp.new('[^"]'), index) == index
-                r5 = (SyntaxNode).new(input, index...(index + 1))
-                @index += 1
-              else
-                r5 = nil
-              end
-              if r5
-                s4 << r5
-              else
-                break
-              end
+            if input.index('"', index) == index
+              r4 = (SyntaxNode).new(input, index...(index + 1))
+              @index += 1
+            else
+              terminal_parse_failure('"')
+              r4 = nil
             end
-            r4 = SyntaxNode.new(input, i4...index, s4)
             s0 << r4
-            if r4
-              if input.index('"', index) == index
-                r6 = (SyntaxNode).new(input, index...(index + 1))
-                @index += 1
-              else
-                terminal_parse_failure('"')
-                r6 = nil
-              end
-              s0 << r6
-            end
           end
         end
         if s0.last

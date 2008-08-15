@@ -1,7 +1,18 @@
-|
+okay so we are starting out clear || 
 
 (def fi 3) |
-(def ya (fun (x) (* x # here is where something needs to happen # 3))) |
-(map ['rrr' 'uiowoyqpp i ' 'nogo deetdelowu'] ya) |
-(* 55 # this is not quite so important, but necessary # 12) |
+(def ya (fun (x) (* x 3))) |
+(def ikik (map ['rrr' 'uiowoyqpp i ' 'nogo deetdelowu'] ya)) |
+(* 55 12) |
+ikik |
+
+|| continuing on now...  maybe I will throw in a || (* 3 5) || just for fun.  Yes?
+what about Ifs, and loops?  All about control flow.
+
+|| (if (true) then || what??  Really? || else || yes really.  ||) ||
+
+So that almost makes sense.  The grouping should really be more clear though.
+maybe something with a directional brace, something like {{ maybe? }}
+
+
 
