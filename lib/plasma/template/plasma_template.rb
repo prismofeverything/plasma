@@ -42,8 +42,8 @@ module Plasma
         end
       end
 
-      def render(env={})
-        @plasma.env.merge!(env)
+      def render(rel={})
+        @plasma.env.merge!(rel)
         evaluated = @plasmic.map{|p| @plasma.evaluate(p)}
 
         rendered = ''

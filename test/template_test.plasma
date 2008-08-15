@@ -1,0 +1,7 @@
+|
+
+(def fi 3) |
+(def ya (fun (x) (* x # here is where something needs to happen # 3))) |
+(map ['rrr' 'uiowoyqpp i ' 'nogo deetdelowu'] ya) |
+(* 55 # this is not quite so important, but necessary # 12) |
+

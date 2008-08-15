@@ -17,7 +17,7 @@ module Plasma
             else
               interp.evaluate(quote)
             end
-          end
+          end,
 
           :parse => RubyClosure.new('parse', interp) do |code|
             interp.parse(code)

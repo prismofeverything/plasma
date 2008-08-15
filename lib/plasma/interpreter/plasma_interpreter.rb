@@ -70,7 +70,7 @@ module Plasma
       end
       
       def strip(code)
-        code.gsub(@comment, '')
+        code.gsub(@comment, '').strip
       end
 
       def parse(code)
