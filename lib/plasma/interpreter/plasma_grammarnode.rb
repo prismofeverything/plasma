@@ -37,6 +37,20 @@ module Plasma
         self
       end
 
+      def scope(inner={})
+        self.scope!(inner)
+
+        begin
+          value = yield self
+          self.release!
+
+          return value
+        rescue => detail
+          self.release!
+          detail
+        end
+      end
+
       def resolve(key)
         @state.reverse_each do |layer|
           return layer[key] if layer.include?(key)
@@ -80,11 +94,9 @@ module Plasma
         zipped.merge!(:env => @env)
 
         if left.empty?
-          @env.scope!(zipped)
-          value = @body.evaluate(@env)
-          @env.release!()
-
-          return value
+          @env.scope(zipped) do |env|
+            @body.evaluate(env)
+          end
         else
           return Closure.new(@env.dup.merge!(zipped), left, body)
         end
@@ -174,37 +186,21 @@ module Plasma
       end
     end
 
-    class CommentNode < PlasmaNode
-      def evaluate(env)
-        template = Plasma::Template::PlasmaTemplate.parse(body.text_value)
-
-        env.scope!
-        template.plasma.env = env
-        rendered = template.render
-        env.release!
-
-        rendered
-      end
-    end
-
     class DeclNode < ColNode
       def evaluate(env)
-        value = col.inject(nil) do |value, statement|
+        col.inject(nil) do |value, statement|
           statement.evaluate(env)
         end
-        value
       end
     end
 
     class SeqNode < ColNode
       def evaluate(env)
-        env.scope!
-        value = col.inject(nil) do |value, statement|
-          statement.evaluate(env)
+        env.scope do |env|
+          col.inject(nil) do |value, statement|
+            statement.evaluate(env)
+          end
         end
-        env.release!
-
-        value
       end
     end
 
