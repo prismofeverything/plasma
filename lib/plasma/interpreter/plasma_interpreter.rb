@@ -5,6 +5,8 @@ module Plasma
 
       def initialize
         @prompt = "-----|  "
+        @comment = /##*[^#]+##*/
+
         @dir = File.dirname(__FILE__)
         @load_path = [File.join(PLASMA_ROOT, 'include'), PLASMA_PACKAGE_ROOT, @dir]
 
@@ -67,6 +69,10 @@ module Plasma
         raise NoSuchSourceException.new(plasma), "no such source #{plasma}", caller
       end
       
+      def strip(code)
+        code.gsub(@comment, '')
+      end
+
       def parse(code)
         tree = @plasma.parse(code)
         raise FailedToParseException.new, "failed to parse #{code}", caller if tree.nil? 
@@ -75,12 +81,12 @@ module Plasma
       end
 
       def evaluate(tree, env=nil)
-        env = @env if env.nil?
+        env ||= @env
         tree.evaluate(env)
       end
 
       def interpret(code, env=nil)
-        tree = parse(code)
+        tree = parse(strip(code))
         evaluate(tree, env)
       end
 
@@ -88,14 +94,18 @@ module Plasma
         while true
           begin
             STDOUT.write(@prompt)
+
             input = STDIN.readline.strip
-            break if input == 'quit' or input == 'exit'
+            unless input.empty?
 
-            value = interpret input
+              value = interpret input
 
-            STDOUT.write("  #{value.to_plasma}\n")
+              STDOUT.write("  #{value.to_plasma}\n")
+            end
+          rescue EOFError => e
+            break
           rescue Exception => e
-            STDOUT.write("  #{e.to_s}\n")
+            STDOUT.write("  #{e}\n")
           end
         end
       end
