@@ -623,21 +623,30 @@ module Plasma
       end
 
       module Defun0
-        def s
+        def x
           elements[1]
-        end
-
-        def params
-          elements[2]
         end
 
         def s
           elements[3]
         end
 
-        def plasma
+        def params
           elements[4]
         end
+
+        def s
+          elements[5]
+        end
+
+        def plasma
+          elements[6]
+        end
+
+        def x
+          elements[7]
+        end
+
       end
 
       def _nt_defun
@@ -649,26 +658,54 @@ module Plasma
         end
 
         i0, s0 = index, []
-        if input.index('defun', index) == index
-          r1 = (SyntaxNode).new(input, index...(index + 5))
-          @index += 5
+        if input.index('(', index) == index
+          r1 = (SyntaxNode).new(input, index...(index + 1))
+          @index += 1
         else
-          terminal_parse_failure('defun')
+          terminal_parse_failure('(')
           r1 = nil
         end
         s0 << r1
         if r1
-          r2 = _nt_s
+          r2 = _nt_x
           s0 << r2
           if r2
-            r3 = _nt_params
+            if input.index('defun', index) == index
+              r3 = (SyntaxNode).new(input, index...(index + 5))
+              @index += 5
+            else
+              terminal_parse_failure('defun')
+              r3 = nil
+            end
             s0 << r3
             if r3
               r4 = _nt_s
               s0 << r4
               if r4
-                r5 = _nt_plasma
+                r5 = _nt_params
                 s0 << r5
+                if r5
+                  r6 = _nt_s
+                  s0 << r6
+                  if r6
+                    r7 = _nt_plasma
+                    s0 << r7
+                    if r7
+                      r8 = _nt_x
+                      s0 << r8
+                      if r8
+                        if input.index(')', index) == index
+                          r9 = (SyntaxNode).new(input, index...(index + 1))
+                          @index += 1
+                        else
+                          terminal_parse_failure(')')
+                          r9 = nil
+                        end
+                        s0 << r9
+                      end
+                    end
+                  end
+                end
               end
             end
           end
@@ -687,21 +724,30 @@ module Plasma
       end
 
       module Def0
-        def s
+        def x
           elements[1]
-        end
-
-        def sym
-          elements[2]
         end
 
         def s
           elements[3]
         end
 
-        def plasma
+        def sym
           elements[4]
         end
+
+        def s
+          elements[5]
+        end
+
+        def plasma
+          elements[6]
+        end
+
+        def x
+          elements[7]
+        end
+
       end
 
       def _nt_def
@@ -713,26 +759,54 @@ module Plasma
         end
 
         i0, s0 = index, []
-        if input.index('def', index) == index
-          r1 = (SyntaxNode).new(input, index...(index + 3))
-          @index += 3
+        if input.index('(', index) == index
+          r1 = (SyntaxNode).new(input, index...(index + 1))
+          @index += 1
         else
-          terminal_parse_failure('def')
+          terminal_parse_failure('(')
           r1 = nil
         end
         s0 << r1
         if r1
-          r2 = _nt_s
+          r2 = _nt_x
           s0 << r2
           if r2
-            r3 = _nt_sym
+            if input.index('def', index) == index
+              r3 = (SyntaxNode).new(input, index...(index + 3))
+              @index += 3
+            else
+              terminal_parse_failure('def')
+              r3 = nil
+            end
             s0 << r3
             if r3
               r4 = _nt_s
               s0 << r4
               if r4
-                r5 = _nt_plasma
+                r5 = _nt_sym
                 s0 << r5
+                if r5
+                  r6 = _nt_s
+                  s0 << r6
+                  if r6
+                    r7 = _nt_plasma
+                    s0 << r7
+                    if r7
+                      r8 = _nt_x
+                      s0 << r8
+                      if r8
+                        if input.index(')', index) == index
+                          r9 = (SyntaxNode).new(input, index...(index + 1))
+                          @index += 1
+                        else
+                          terminal_parse_failure(')')
+                          r9 = nil
+                        end
+                        s0 << r9
+                      end
+                    end
+                  end
+                end
               end
             end
           end

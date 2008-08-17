@@ -34,11 +34,11 @@ module Plasma
       end
 
       rule defun
-        'defun' s params s plasma <DefunNode>
+        '(' x 'defun' s params s plasma x ')' <DefunNode>
       end
 
       rule def
-        'def' s sym s plasma <DefNode>
+        '(' x 'def' s sym s plasma x ')' <DefNode>
       end
 
       rule fun
