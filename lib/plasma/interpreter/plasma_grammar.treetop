@@ -1,6 +1,26 @@
 module Plasma
   module Interpreter
     grammar PlasmaGrammar
+      rule template
+        head:(plain)* body:(macro tail:(plain)*)* <TemplateNode>
+      end
+
+      rule plain
+        [^\[\]`']     #`
+      end
+
+      rule macro
+        quote / expansion
+      end
+
+      rule quote
+        '`' template '\'' <QuoteNode>
+      end
+
+      rule expansion
+        '[' x plasma x ']' <ExpansionNode>
+      end
+
       rule plasma
         decl / seq / quote / defun / def / fun / if / apply / bool / sym / hash / list / regex / date / time / str / num
       end
@@ -13,16 +33,12 @@ module Plasma
         '(' x first:plasma? rest:(s '|' s plasma)* x ')' <SeqNode>
       end
 
-      rule quote
-        "'" plasma <QuoteNode>
-      end
-
       rule defun
-        '(' x 'defun' s params s plasma x ')' <DefunNode>
+        'defun' s params s plasma <DefunNode>
       end
 
       rule def
-        '(' x 'def' s sym s plasma x ')' <DefNode>
+        'def' s sym s plasma <DefNode>
       end
 
       rule fun
@@ -62,7 +78,11 @@ module Plasma
       end
 
       rule regex
-        '/' body:([^/])* '/' <RegexNode>
+        '/' body:(regex_char)* '/' <RegexNode>
+      end
+
+      rule regex_char
+        '\\/' / [^/]
       end
 
       rule date
@@ -82,11 +102,15 @@ module Plasma
       end
 
       rule str
-        '"' body:([^"])* '"' <StrNode>
+        '"' body:(str_char)* '"' <StrNode>
+      end
+
+      rule str_char
+        '\\"' / [^"]         #"
       end
 
       rule num
-        whole:([0-9]+) expansion:('.' [0-9]+)? <NumNode>
+        whole:([0-9]+) decimal:('.' [0-9]+)? <NumNode>
       end
 
       rule x

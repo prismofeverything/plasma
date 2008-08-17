@@ -4,7 +4,260 @@ module Plasma
       include Treetop::Runtime
 
       def root
-        @root || :plasma
+        @root || :template
+      end
+
+      module Template0
+        def macro
+          elements[0]
+        end
+
+        def tail
+          elements[1]
+        end
+      end
+
+      module Template1
+        def head
+          elements[0]
+        end
+
+        def body
+          elements[1]
+        end
+      end
+
+      def _nt_template
+        start_index = index
+        if node_cache[:template].has_key?(index)
+          cached = node_cache[:template][index]
+          @index = cached.interval.end if cached
+          return cached
+        end
+
+        i0, s0 = index, []
+        s1, i1 = [], index
+        loop do
+          r2 = _nt_plain
+          if r2
+            s1 << r2
+          else
+            break
+          end
+        end
+        r1 = SyntaxNode.new(input, i1...index, s1)
+        s0 << r1
+        if r1
+          s3, i3 = [], index
+          loop do
+            i4, s4 = index, []
+            r5 = _nt_macro
+            s4 << r5
+            if r5
+              s6, i6 = [], index
+              loop do
+                r7 = _nt_plain
+                if r7
+                  s6 << r7
+                else
+                  break
+                end
+              end
+              r6 = SyntaxNode.new(input, i6...index, s6)
+              s4 << r6
+            end
+            if s4.last
+              r4 = (SyntaxNode).new(input, i4...index, s4)
+              r4.extend(Template0)
+            else
+              self.index = i4
+              r4 = nil
+            end
+            if r4
+              s3 << r4
+            else
+              break
+            end
+          end
+          r3 = SyntaxNode.new(input, i3...index, s3)
+          s0 << r3
+        end
+        if s0.last
+          r0 = (TemplateNode).new(input, i0...index, s0)
+          r0.extend(Template1)
+        else
+          self.index = i0
+          r0 = nil
+        end
+
+        node_cache[:template][start_index] = r0
+
+        return r0
+      end
+
+      def _nt_plain
+        start_index = index
+        if node_cache[:plain].has_key?(index)
+          cached = node_cache[:plain][index]
+          @index = cached.interval.end if cached
+          return cached
+        end
+
+        if input.index(Regexp.new('[^\\[\\]`\']'), index) == index
+          r0 = (SyntaxNode).new(input, index...(index + 1))
+          @index += 1
+        else
+          r0 = nil
+        end
+
+        node_cache[:plain][start_index] = r0
+
+        return r0
+      end
+
+      def _nt_macro
+        start_index = index
+        if node_cache[:macro].has_key?(index)
+          cached = node_cache[:macro][index]
+          @index = cached.interval.end if cached
+          return cached
+        end
+
+        i0 = index
+        r1 = _nt_quote
+        if r1
+          r0 = r1
+        else
+          r2 = _nt_expansion
+          if r2
+            r0 = r2
+          else
+            self.index = i0
+            r0 = nil
+          end
+        end
+
+        node_cache[:macro][start_index] = r0
+
+        return r0
+      end
+
+      module Quote0
+        def template
+          elements[1]
+        end
+
+      end
+
+      def _nt_quote
+        start_index = index
+        if node_cache[:quote].has_key?(index)
+          cached = node_cache[:quote][index]
+          @index = cached.interval.end if cached
+          return cached
+        end
+
+        i0, s0 = index, []
+        if input.index('`', index) == index
+          r1 = (SyntaxNode).new(input, index...(index + 1))
+          @index += 1
+        else
+          terminal_parse_failure('`')
+          r1 = nil
+        end
+        s0 << r1
+        if r1
+          r2 = _nt_template
+          s0 << r2
+          if r2
+            if input.index('\'', index) == index
+              r3 = (SyntaxNode).new(input, index...(index + 1))
+              @index += 1
+            else
+              terminal_parse_failure('\'')
+              r3 = nil
+            end
+            s0 << r3
+          end
+        end
+        if s0.last
+          r0 = (QuoteNode).new(input, i0...index, s0)
+          r0.extend(Quote0)
+        else
+          self.index = i0
+          r0 = nil
+        end
+
+        node_cache[:quote][start_index] = r0
+
+        return r0
+      end
+
+      module Expansion0
+        def x
+          elements[1]
+        end
+
+        def plasma
+          elements[2]
+        end
+
+        def x
+          elements[3]
+        end
+
+      end
+
+      def _nt_expansion
+        start_index = index
+        if node_cache[:expansion].has_key?(index)
+          cached = node_cache[:expansion][index]
+          @index = cached.interval.end if cached
+          return cached
+        end
+
+        i0, s0 = index, []
+        if input.index('[', index) == index
+          r1 = (SyntaxNode).new(input, index...(index + 1))
+          @index += 1
+        else
+          terminal_parse_failure('[')
+          r1 = nil
+        end
+        s0 << r1
+        if r1
+          r2 = _nt_x
+          s0 << r2
+          if r2
+            r3 = _nt_plasma
+            s0 << r3
+            if r3
+              r4 = _nt_x
+              s0 << r4
+              if r4
+                if input.index(']', index) == index
+                  r5 = (SyntaxNode).new(input, index...(index + 1))
+                  @index += 1
+                else
+                  terminal_parse_failure(']')
+                  r5 = nil
+                end
+                s0 << r5
+              end
+            end
+          end
+        end
+        if s0.last
+          r0 = (ExpansionNode).new(input, i0...index, s0)
+          r0.extend(Expansion0)
+        else
+          self.index = i0
+          r0 = nil
+        end
+
+        node_cache[:expansion][start_index] = r0
+
+        return r0
       end
 
       def _nt_plasma
@@ -369,71 +622,22 @@ module Plasma
         return r0
       end
 
-      module Quote0
-        def plasma
-          elements[1]
-        end
-      end
-
-      def _nt_quote
-        start_index = index
-        if node_cache[:quote].has_key?(index)
-          cached = node_cache[:quote][index]
-          @index = cached.interval.end if cached
-          return cached
-        end
-
-        i0, s0 = index, []
-        if input.index("'", index) == index
-          r1 = (SyntaxNode).new(input, index...(index + 1))
-          @index += 1
-        else
-          terminal_parse_failure("'")
-          r1 = nil
-        end
-        s0 << r1
-        if r1
-          r2 = _nt_plasma
-          s0 << r2
-        end
-        if s0.last
-          r0 = (QuoteNode).new(input, i0...index, s0)
-          r0.extend(Quote0)
-        else
-          self.index = i0
-          r0 = nil
-        end
-
-        node_cache[:quote][start_index] = r0
-
-        return r0
-      end
-
       module Defun0
-        def x
+        def s
           elements[1]
+        end
+
+        def params
+          elements[2]
         end
 
         def s
           elements[3]
         end
 
-        def params
+        def plasma
           elements[4]
         end
-
-        def s
-          elements[5]
-        end
-
-        def plasma
-          elements[6]
-        end
-
-        def x
-          elements[7]
-        end
-
       end
 
       def _nt_defun
@@ -445,54 +649,26 @@ module Plasma
         end
 
         i0, s0 = index, []
-        if input.index('(', index) == index
-          r1 = (SyntaxNode).new(input, index...(index + 1))
-          @index += 1
+        if input.index('defun', index) == index
+          r1 = (SyntaxNode).new(input, index...(index + 5))
+          @index += 5
         else
-          terminal_parse_failure('(')
+          terminal_parse_failure('defun')
           r1 = nil
         end
         s0 << r1
         if r1
-          r2 = _nt_x
+          r2 = _nt_s
           s0 << r2
           if r2
-            if input.index('defun', index) == index
-              r3 = (SyntaxNode).new(input, index...(index + 5))
-              @index += 5
-            else
-              terminal_parse_failure('defun')
-              r3 = nil
-            end
+            r3 = _nt_params
             s0 << r3
             if r3
               r4 = _nt_s
               s0 << r4
               if r4
-                r5 = _nt_params
+                r5 = _nt_plasma
                 s0 << r5
-                if r5
-                  r6 = _nt_s
-                  s0 << r6
-                  if r6
-                    r7 = _nt_plasma
-                    s0 << r7
-                    if r7
-                      r8 = _nt_x
-                      s0 << r8
-                      if r8
-                        if input.index(')', index) == index
-                          r9 = (SyntaxNode).new(input, index...(index + 1))
-                          @index += 1
-                        else
-                          terminal_parse_failure(')')
-                          r9 = nil
-                        end
-                        s0 << r9
-                      end
-                    end
-                  end
-                end
               end
             end
           end
@@ -511,30 +687,21 @@ module Plasma
       end
 
       module Def0
-        def x
+        def s
           elements[1]
+        end
+
+        def sym
+          elements[2]
         end
 
         def s
           elements[3]
         end
 
-        def sym
+        def plasma
           elements[4]
         end
-
-        def s
-          elements[5]
-        end
-
-        def plasma
-          elements[6]
-        end
-
-        def x
-          elements[7]
-        end
-
       end
 
       def _nt_def
@@ -546,54 +713,26 @@ module Plasma
         end
 
         i0, s0 = index, []
-        if input.index('(', index) == index
-          r1 = (SyntaxNode).new(input, index...(index + 1))
-          @index += 1
+        if input.index('def', index) == index
+          r1 = (SyntaxNode).new(input, index...(index + 3))
+          @index += 3
         else
-          terminal_parse_failure('(')
+          terminal_parse_failure('def')
           r1 = nil
         end
         s0 << r1
         if r1
-          r2 = _nt_x
+          r2 = _nt_s
           s0 << r2
           if r2
-            if input.index('def', index) == index
-              r3 = (SyntaxNode).new(input, index...(index + 3))
-              @index += 3
-            else
-              terminal_parse_failure('def')
-              r3 = nil
-            end
+            r3 = _nt_sym
             s0 << r3
             if r3
               r4 = _nt_s
               s0 << r4
               if r4
-                r5 = _nt_sym
+                r5 = _nt_plasma
                 s0 << r5
-                if r5
-                  r6 = _nt_s
-                  s0 << r6
-                  if r6
-                    r7 = _nt_plasma
-                    s0 << r7
-                    if r7
-                      r8 = _nt_x
-                      s0 << r8
-                      if r8
-                        if input.index(')', index) == index
-                          r9 = (SyntaxNode).new(input, index...(index + 1))
-                          @index += 1
-                        else
-                          terminal_parse_failure(')')
-                          r9 = nil
-                        end
-                        s0 << r9
-                      end
-                    end
-                  end
-                end
               end
             end
           end
@@ -1515,12 +1654,7 @@ module Plasma
         if r1
           s2, i2 = [], index
           loop do
-            if input.index(Regexp.new('[^/]'), index) == index
-              r3 = (SyntaxNode).new(input, index...(index + 1))
-              @index += 1
-            else
-              r3 = nil
-            end
+            r3 = _nt_regex_char
             if r3
               s2 << r3
             else
@@ -1549,6 +1683,44 @@ module Plasma
         end
 
         node_cache[:regex][start_index] = r0
+
+        return r0
+      end
+
+      def _nt_regex_char
+        start_index = index
+        if node_cache[:regex_char].has_key?(index)
+          cached = node_cache[:regex_char][index]
+          @index = cached.interval.end if cached
+          return cached
+        end
+
+        i0 = index
+        if input.index('\\/', index) == index
+          r1 = (SyntaxNode).new(input, index...(index + 2))
+          @index += 2
+        else
+          terminal_parse_failure('\\/')
+          r1 = nil
+        end
+        if r1
+          r0 = r1
+        else
+          if input.index(Regexp.new('[^/]'), index) == index
+            r2 = (SyntaxNode).new(input, index...(index + 1))
+            @index += 1
+          else
+            r2 = nil
+          end
+          if r2
+            r0 = r2
+          else
+            self.index = i0
+            r0 = nil
+          end
+        end
+
+        node_cache[:regex_char][start_index] = r0
 
         return r0
       end
@@ -1843,12 +2015,7 @@ module Plasma
         if r1
           s2, i2 = [], index
           loop do
-            if input.index(Regexp.new('[^"]'), index) == index
-              r3 = (SyntaxNode).new(input, index...(index + 1))
-              @index += 1
-            else
-              r3 = nil
-            end
+            r3 = _nt_str_char
             if r3
               s2 << r3
             else
@@ -1881,6 +2048,44 @@ module Plasma
         return r0
       end
 
+      def _nt_str_char
+        start_index = index
+        if node_cache[:str_char].has_key?(index)
+          cached = node_cache[:str_char][index]
+          @index = cached.interval.end if cached
+          return cached
+        end
+
+        i0 = index
+        if input.index('\\"', index) == index
+          r1 = (SyntaxNode).new(input, index...(index + 2))
+          @index += 2
+        else
+          terminal_parse_failure('\\"')
+          r1 = nil
+        end
+        if r1
+          r0 = r1
+        else
+          if input.index(Regexp.new('[^"]'), index) == index
+            r2 = (SyntaxNode).new(input, index...(index + 1))
+            @index += 1
+          else
+            r2 = nil
+          end
+          if r2
+            r0 = r2
+          else
+            self.index = i0
+            r0 = nil
+          end
+        end
+
+        node_cache[:str_char][start_index] = r0
+
+        return r0
+      end
+
       module Num0
       end
 
@@ -1889,7 +2094,7 @@ module Plasma
           elements[0]
         end
 
-        def expansion
+        def decimal
           elements[1]
         end
       end

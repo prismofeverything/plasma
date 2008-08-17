@@ -186,6 +186,40 @@ module Plasma
       end
     end
 
+    class Treetop::Runtime::SyntaxNode
+      def to_s
+        text_value
+      end
+    end
+
+    class TemplateNode < PlasmaNode
+      def evaluate(env)
+        value = body.empty? ? '' : body.elements.inject('') do |so_far, el|
+          tail_value = el.respond_to?(:tail) ? el.tail.text_value : ''
+          so_far + el.macro.evaluate(env).to_s + tail_value
+        end
+        head.text_value + value
+      end
+    end
+
+    class PlainNode < PlasmaNode
+      def evaluate(env)
+        self.text_value
+      end
+    end
+
+    class QuoteNode < PlasmaNode
+      def evaluate(env)
+        template.evaluate(env)
+      end
+    end
+
+    class ExpansionNode < PlasmaNode
+      def evaluate(env)
+        plasma.evaluate(env)
+      end
+    end
+
     class DeclNode < ColNode
       def evaluate(env)
         col.inject(nil) do |value, statement|
@@ -204,19 +238,13 @@ module Plasma
       end
     end
 
-    class QuoteNode < PlasmaNode
-      def evaluate(env)
-        plasma
-      end
-    end
-
     class DefunNode < PlasmaNode
       def evaluate(env)
         syms = params.syms
         closure = Closure.new(env, syms.slice(1..syms.length), plasma)
         closure.env.merge!(syms[0] => closure)
         env.bind!(syms[0], closure)
-        closure
+        ''
       end
     end
 
@@ -224,7 +252,7 @@ module Plasma
       def evaluate(env)
         value = plasma.evaluate(env)
         env.bind!(sym.text_value.to_sym, value)
-        value
+        ''
       end
     end
 
@@ -338,7 +366,11 @@ module Plasma
 
     class NumNode < PlasmaNode
       def evaluate(env)
-        text_value.to_f
+        if self.respond_to?(:decimal)
+          text_value.to_f
+        else
+          text_value.to_i
+        end
       end
     end
   end

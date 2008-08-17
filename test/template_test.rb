@@ -1,6 +1,9 @@
 require 'lib/plasma.rb'
 
 template = File.open(File.join(PLASMA_TEST, "template_test.plasma")).read
-plasma = Plasma::Template::PlasmaTemplate.parse(template)
+plasma = Plasma::Interpreter::PlasmaGrammarParser.new
 
-puts plasma.render()
+env = Plasma::Interpreter::Env.new
+
+p = plasma.parse template
+puts p.evaluate(env)

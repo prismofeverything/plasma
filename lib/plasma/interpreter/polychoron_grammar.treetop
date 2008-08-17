@@ -1,0 +1,19 @@
+module Plasma
+  module Interpreter
+    grammar PolychoronGrammar
+      include plasma
+
+      rule template
+        first:plain? rest:('[' s body:polychoron s ']' tail:plain?)* <TemplateNode>
+      end
+
+      rule plain
+        [^[`]+ <PlainNode>                 #`
+      end
+
+      rule polychoron
+        plasma
+      end
+    end
+  end
+end
