@@ -1,9 +1,9 @@
-[ def move (fun (a b) `move disk from [a] to [b]
-') ]
-[ def do_hanoi (fun (a b c d) (if (<= a 1) 
-                               then (move b c)
-                               else `[( do_hanoi (- a 1) b d c )][( move b c )][( do_hanoi (- a 1) d c b )]')) ]
-[ def hanoi (fun (n) (do_hanoi n "source" "destination" "auxillary")) ]
+[( def move (fun (a b) `move disk from [a] to [b]
+' ))]
+[( def do_hanoi (fun (a b c d) (if (<= a 1) 
+                                then (move b c)
+                                else `[( do_hanoi (- a 1) b d c )][( move b c )][( do_hanoi (- a 1) d c b )]')))]
+[( def hanoi (fun (n) (do_hanoi n "source" "destination" "auxillary" )) )]
 
 [( hanoi 3 )]
 
