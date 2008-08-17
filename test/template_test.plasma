@@ -9,10 +9,9 @@ okay so we are starting out clear
 continuing on now...  maybe I will throw in a [(* 3 5)] just for fun.  Yes?
 what about Ifs, and loops?  All about control flow.
 
-[(if (true) then 
-  `what??  [(* "yes" 14)] Really?'
-else
-  `yes really.')] 
+[( if (true) 
+   then `what??  [(* "yes" 14)] Really?'
+   else `yes really.' )] 
 
 So that almost makes sense.  The grouping should really be more clear though.
 maybe something with a directional brace, something like {{ maybe? }}
@@ -20,13 +19,24 @@ maybe something with a directional brace, something like {{ maybe? }}
 no.
 
 [( def new (fun (x) (x "lalala")) )]
-[( def thing (fun (y) (concat y " dogono")) )]
+[( def thing (fun (y) (concat (* y 3) " dogono")) )]
 [( def x 44 )]
 
 So it will go like this... [( new thing )] and maybe another 
-[( if (> x 3) then `this could happen if [ x ] was defined they would all be substit[`u']ted' else (* 3 11) )]
-And maybe a function could go [( def follow (fun (x) `okay now this is plain text again?  How did [x] that happen?  I guess in the quote???') )]
+[( if (> x 3) 
+   then `this could happen if [ x ] was defined they would all be substit[`u']ted' 
+   else (* 3 11) )]
+And maybe a function could go 
+[( def follow (fun (x) `okay now this is plain text again?  How did [x] that happen?  I guess in the quote???') )]
 now we go along for a while and end up with a call to [( follow 3 )] and end up with something significant?  So the scopes switch back and forth?  That cant be right!
 
 Okay, calling the macro and quoting are two different things.  They must be treated differently.   Okay
+
+
+Now for some tricky shit:
+
+[( def dog ``now a thing for [( thing ```yes maybe just [x]''' )] and some more'' )]
+[( dog )]
+
+
 
