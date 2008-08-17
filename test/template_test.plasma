@@ -4,7 +4,7 @@ okay so we are starting out clear
 [( def ya (fun (x) (* x 3)) )]
 [( def ikik (map ["rrr" "uiowoyqpp i " fi "nogo deetdelowu"] ya) )]
 [( * 55 12 )]
-[ ikik ]
+[( join ikik " " )]
 
 continuing on now...  maybe I will throw in a [(* 3 5)] just for fun.  Yes?
 what about Ifs, and loops?  All about control flow.
