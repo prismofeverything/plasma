@@ -12,7 +12,10 @@ class PlasmaView
     end
     assigns.merge!(local_assigns)
     
-    plasma = Plasma::Template::PlasmaTemplate.parse(template)
-    plasma.render(assigns)
+    plasma = Plasma::Interpreter::PlasmaGrammarParser.new
+    tree = plasma.parse(template)
+    env = Plasma::Interpreter::Env.new(assigns)
+
+    plasma.evaluate(env)
   end
 end

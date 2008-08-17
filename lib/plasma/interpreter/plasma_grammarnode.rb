@@ -69,11 +69,11 @@ module Plasma
       end
 
       def unquote(env)
-        @unevaluated.eval(env)
+        @unevaluated.evaluate(env)
       end
 
       def to_plasma
-        "'#{@unevaluated.text_value}"
+        "`#{@unevaluated.text_value}'"
       end
     end
 
@@ -195,8 +195,10 @@ module Plasma
     class TemplateNode < PlasmaNode
       def evaluate(env)
         value = body.empty? ? '' : body.elements.inject('') do |so_far, el|
+          macro_value = el.macro.is_a?(ExpansionNode) ? el.macro.evaluate(env).to_s : el.macro.text_value
           tail_value = el.respond_to?(:tail) ? el.tail.text_value : ''
-          so_far + el.macro.evaluate(env).to_s + tail_value
+
+          so_far + macro_value + tail_value
         end
         head.text_value + value
       end

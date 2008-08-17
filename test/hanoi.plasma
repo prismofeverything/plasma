@@ -13,4 +13,4 @@
      (do_hanoi n "source" "destination" "auxillary"))) ]
 
 
-[(hanoi 3)]
+[(hanoi 9)]

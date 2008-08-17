@@ -20,10 +20,10 @@ no.
 
 [( def new (fun (x) (x "lalala")) )]
 [( def thing (fun (y) (concat (* y 3) " dogono")) )]
-[( def x 44 )]
+[( def x "palatial" )]
 
 So it will go like this... [( new thing )] and maybe another 
-[( if (> x 3) 
+[( if (> x "borox") 
    then `this could happen if [ x ] was defined they would all be substit[`u']ted' 
    else (* 3 11) )]
 And maybe a function could go 
@@ -35,7 +35,7 @@ Okay, calling the macro and quoting are two different things.  They must be trea
 
 Now for some tricky shit:
 
-[( def dog ``now a thing for [( thing ```yes maybe just [x]''' )] and some more'' )]
+[( def dog `now a thing for [( thing `yes maybe just [x] ' )] and some more' )]
 [( dog )]
 
 
