@@ -7,12 +7,12 @@ require 'rake/gempackagetask'
 
 gemspec = Gem::Specification.new do |s|
   s.name = "plasma"
-  s.version = "0.0.1"
+  s.version = "0.1.0"
   s.author = "Ryan Spangler"
   s.email = "patch_work8848@yahoo.com"
   s.homepage = "http://kaleidomedallion.com/plasma/"
   s.platform = Gem::Platform::RUBY
-  s.summary = "plasma --- a lightweight interpreted templating language in ruby"
+  s.summary = "plasma --- a lightweight interpreted templating language in treetop and ruby"
   s.files = FileList['README', 'Rakefile', "{test,lib,bin,doc,examples}/**/*"].to_a
   s.bindir = 'bin'
   s.executables = ['plasma']
