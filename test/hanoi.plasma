@@ -12,5 +12,7 @@
    (fun (n) 
      (do_hanoi n "source" "destination" "auxillary"))) ]
 
+[(def levels 5)]
 
-[(hanoi 9)]
+Tower of Hanoi ([levels] levels)
+[(hanoi 5)]
