@@ -8,7 +8,10 @@ module Plasma
         @comment = /##*[^#]+##*/
 
         @dir = File.dirname(__FILE__)
-        @load_path = [File.join(PLASMA_ROOT, 'include'), PLASMA_PACKAGE_ROOT, @dir]
+        @load_path = [PLASMA_PACKAGE_ROOT, 
+                      File.join(PLASMA_ROOT, 'include'), 
+                      @dir, 
+                      `pwd`.strip]
 
         @env = Env.new
         @env.bind!(:mu, self)
@@ -54,7 +57,7 @@ module Plasma
         found = false
         value = nil
         
-        @load_path.each do |p|
+        @load_path.reverse_each do |p|
           package = File.join(p, file)
           if File.exist? package
             source = File.open(package, 'r')
@@ -62,6 +65,7 @@ module Plasma
 
             value = self.interpret(code)
             found = true
+            break
           end
         end
 

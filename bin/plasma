@@ -10,7 +10,11 @@ interpreter = Plasma::Interpreter::PlasmaInterpreter.new
 if ARGV.empty?
   interpreter.repl
 else
-  puts interpreter.merge(ARGV[0])
+  value = ARGV.inject(nil) do |value, arg|
+    interpreter.merge(arg)
+  end
+
+  puts value
 end
 
 
