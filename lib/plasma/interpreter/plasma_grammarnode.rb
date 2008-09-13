@@ -160,6 +160,12 @@ module Plasma
     class FailedToParseException < Exception
     end
 
+    class Treetop::Runtime::SyntaxNode
+      def to_s
+        text_value
+      end
+    end
+
     class PlasmaNode < Treetop::Runtime::SyntaxNode
       def evaluate(env)
         orb.evaluate(env)
@@ -183,12 +189,6 @@ module Plasma
             end.flatten.unshift(first)
           end
         end
-      end
-    end
-
-    class Treetop::Runtime::SyntaxNode
-      def to_s
-        text_value
       end
     end
 
@@ -368,10 +368,10 @@ module Plasma
 
     class NumNode < PlasmaNode
       def evaluate(env)
-        if self.respond_to?(:decimal)
-          text_value.to_f
-        else
+        if self.decimal.blank?
           text_value.to_i
+        else
+          text_value.to_f
         end
       end
     end
