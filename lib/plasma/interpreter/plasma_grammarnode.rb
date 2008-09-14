@@ -368,7 +368,7 @@ module Plasma
 
     class NumNode < PlasmaNode
       def evaluate(env)
-        if self.decimal.blank?
+        if self.decimal.empty?
           text_value.to_i
         else
           text_value.to_f

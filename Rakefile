@@ -7,7 +7,7 @@ require 'rake/gempackagetask'
 
 gemspec = Gem::Specification.new do |s|
   s.name = "plasma"
-  s.version = "0.1.1"
+  s.version = "0.1.2"
   s.author = "Ryan Spangler"
   s.email = "patch_work8848@yahoo.com"
   s.homepage = "http://kaleidomedallion.com/plasma/"
