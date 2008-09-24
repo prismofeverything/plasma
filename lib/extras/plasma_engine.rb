@@ -11,9 +11,13 @@ module Plasma
 
       m = mod.is_a?(Module) ? :module_eval : :instance_eval
       mod.__send__(m, plasma, path || '(plasma)')
+      name
     end
 
     module Mixin
+      def concat_plasma(string, binding)
+        
+      end
     end
   end
 end
