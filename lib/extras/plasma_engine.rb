@@ -1,6 +1,6 @@
 module Plasma
   class PlasmaEngine
-    def self.compile_template(io, name, mod)
+    def self.compile_template(io, name, locals, mod)
       path = File.expand_path(io.path)
       code = io.read.gsub(/"/, '\"')
       plasma = <<-interpret
@@ -21,3 +21,4 @@ module Plasma
     end
   end
 end
+
